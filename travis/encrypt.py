@@ -10,6 +10,7 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric.padding import PKCS1v15
 from cryptography.hazmat.primitives.serialization import load_pem_public_key
 import requests
+import click
 
 from travis.orderer import ordered_load, ordered_dump
 
@@ -49,7 +50,10 @@ def retrieve_public_key(user_repo, url='https://api.travis-ci.org/repos'):
         return response.json()['key'].replace(' RSA ', ' ')
     except (KeyError, ValueError):
         username, repository = user_repo.split('/')
-        raise InvalidCredentialsError("Either the username: '{}' or the repository: '{}' does not exist. Please enter a valid username or repository name. The username and repository name are both case sensitive." .format(username, repository))
+        click.BadParameter("Either the username: '{}' or the repository: '{}' does not exist. Please enter a valid "
+                           "username or repository name. The username and repository name are both case sensitive."
+                           .format(username, repository).format('NAME'), param_hint=["username", "repository"]).show()
+        exit()
 
 
 def encrypt_key(key, password):

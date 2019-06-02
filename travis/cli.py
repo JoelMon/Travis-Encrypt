@@ -14,6 +14,18 @@ from travis.encrypt import (retrieve_public_key, encrypt_key,
                             load_travis_configuration, dump_travis_configuration)
 
 
+CLI_MSG = """
+Pyperclip could not find a copy/paste mechanism for your system.
+
+On Linux, install xclip or xsel via package manager. For example, in Debian:
+    sudo apt-get install xclip
+    sudo apt-get install xsel
+    
+If you're seeing this error on Windows or Mac please visit https://pyperclip.readthedocs.io/en/latest/introduction.html#not-implemented-error
+
+
+"""
+
 class NotRequiredIf(click.Option):
     """Make option not required if another option is present.
     https://stackoverflow.com/a/44349292/5747944
@@ -107,7 +119,10 @@ def cli(username, repository, path, password, deploy, env, clipboard, env_file, 
 
             print('Encrypted password added to {}' .format(path))
         elif clipboard:
-            pyperclip.copy(encrypted_password)
-            print('\nThe encrypted password has been copied to your clipboard.')
+            try:
+                pyperclip.copy(encrypted_password)
+                print('\nThe encrypted password has been copied to your clipboard.')
+            except pyperclip.PyperclipException:
+                click.UsageError(CLI_MSG).show()
         else:
             print('\nPlease add the following to your .travis.yml:\nsecure: {}' .format(encrypted_password))

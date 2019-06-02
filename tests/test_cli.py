@@ -289,3 +289,17 @@ def test_dotenv_mutually_exclusive():
                                      'file.yml', '--env-file=test.env', '--password', 'TEST'])
         assert 'Error: Illegal usage: `password` flag cannot be used with `env_file` flag.\n' in result.output
         assert result.exception
+
+
+@mock.patch('travis.cli.pyperclip._executable_exists')
+def test_clipboard_exception(mock_pyperclip):
+    """Test --clipboard exception.
+
+    If xclip or xsel is not installed on the Linux system then an exception is thrown.
+    This test makes sure that the exception thrown by pyperclip is caught.
+    """
+
+    mock_pyperclip.return_value = False
+
+    with pytest.raises(pyperclip.PyperclipException):
+        pyperclip.copy('Test')

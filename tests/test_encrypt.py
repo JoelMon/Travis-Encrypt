@@ -30,9 +30,24 @@ def test_public_key_retrieval(repository):
 
 
 def test_invalid_credentials():
-    """Test that an InvalidCredentialsError is raised."""
-    with pytest.raises(InvalidCredentialsError):
+    """Test that an SystemExit is raised.
+
+    click.BadParameter() exits with SystemExit when a bad parameter is passed in.
+    """
+    with pytest.raises(SystemExit):
         retrieve_public_key("INVALID_USER_NAME/INVALID_REPO")
+
+
+def test_valid_credentials(repository):
+    """Test that an SystemExit is not raised with valid credentials.
+
+    click.BadParameter() exits with SystemExit when a bad parameter is passed in.
+    """
+
+    try:
+        retrieve_public_key(repository)
+    except SystemExit:
+        pytest.fail("An unexpected credential error occurred.")
 
 
 def test_encrypt_key(repository):
