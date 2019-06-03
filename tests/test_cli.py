@@ -9,6 +9,7 @@ test_depoy_nonempty_file -- test embedding a deployment password in a nonempty f
 test_environment_variable_empty_file -- test embedding an environment variable in an empty file
 test_environment_variable_nonempty_file -- test embedding an environment variable in a nonempty file
 """
+
 import base64
 import string
 from collections import OrderedDict
@@ -202,6 +203,7 @@ def test_environment_variable_multiple_global_items():
             if 'secure' in item:
                 assert base64.b64decode(item['secure'])
 
+
 def test_password_copied_to_clipboard():
     """Test the encrypt module's CLI function with the --clipboard flag."""
     runner = CliRunner()
@@ -290,16 +292,3 @@ def test_dotenv_mutually_exclusive():
         assert 'Error: Illegal usage: `password` flag cannot be used with `env_file` flag.\n' in result.output
         assert result.exception
 
-
-@mock.patch('travis.cli.pyperclip._executable_exists')
-def test_clipboard_exception(mock_pyperclip):
-    """Test --clipboard exception.
-
-    If xclip or xsel is not installed on the Linux system then an exception is thrown.
-    This test makes sure that the exception thrown by pyperclip is caught.
-    """
-
-    mock_pyperclip.return_value = False
-
-    with pytest.raises(pyperclip.PyperclipException):
-        pyperclip.copy('Test')
