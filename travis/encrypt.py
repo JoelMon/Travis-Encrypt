@@ -53,7 +53,7 @@ def retrieve_public_key(user_repo, url='https://api.travis-ci.org/repos'):
         click.BadParameter("Either the username: '{}' or the repository: '{}' does not exist. Please enter a valid "
                            "username or repository name. The username and repository name are both case sensitive."
                            .format(username, repository).format('NAME'), param_hint=["username", "repository"]).show()
-        exit()
+        raise SystemExit(None)
 
 
 def encrypt_key(key, password):
